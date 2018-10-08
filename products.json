@@ -1,0 +1,3 @@
+{"name":"Cat Chow","price":123,"category":"food","imageExt":"jpg","imageRoot":"images\/products\/Cat Chow.jpg","id":1}
+{"name":"Dog Chow","price":400,"category":"food","imageExt":"jpg","imageRoot":"images\/products\/Dog Chow.jpg","id":2}
+{"name":"Pelota Amarilla","price":700,"category":"toys","imageExt":"jpg","imageRoot":"images\/products\/Pelota Amarilla.jpg","id":3}

@@ -1,17 +1,17 @@
 <?php
+session_start();
 require 'loader.php';
 
 
 if($_POST)
 {
-  $foundUser = Json::findUser($_POST);
- 
-  if ($foundUser != null)
+  $foundUser = $db->findUser($_POST);
+  
+  if ($foundUser != false)
   {
     $checkedPassword=$validator->checkPassword($_POST,$foundUser);
-    
-    if($checkedPassword) 
-      {       
+
+    if($checkedPassword) {       
         
         Session::login($foundUser);
         

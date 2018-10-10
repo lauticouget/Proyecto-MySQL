@@ -1,12 +1,10 @@
 <?php 
-session_start();
 
 
 class Session
 {
     public static function Login($foundUser)
     {
-        
         $_SESSION['username']=$foundUser['username'];
         $_SESSION['role']=$foundUser['role'];
         setcookie('username', $foundUser['username'], time()+3600);
@@ -18,16 +16,7 @@ class Session
     }
     public static function adminController()
     {
-        if (isset($_SESSION['role'])){
-            if($_SESSION['role']==7){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        
-        
+        return ($_SESSION['role'] == 7)? true : false;
     }
     public static function loginController()
     {
@@ -45,12 +34,20 @@ class Session
     }
     public static function logout()
     {
+        if(!isset($_SESSION)){
+            session_start();
+        }
         session_destroy();
         setcookie('username', "", time()-1);
     }
     public static function updateCart($cart)
     {
         $_SESSION['cart']=$cart;
+    }
+
+    public static function check()
+    {
+        return isset($_SESSION['username']);
     }
 }
 

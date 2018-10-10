@@ -1,4 +1,6 @@
 <?php 
+session_start();
+
 require 'loader.php';
 var_dump($_SESSION['cart']);
 
@@ -18,7 +20,7 @@ if(isset($_POST['addProduct'])){
 
         $product=new Product($_POST['name'], $_POST['price'], $_POST['category'], $imageExt);
 
-        $savedProduct= Json::saveProduct($product);
+        $savedProduct= $db->saveProduct($product);
     }
 }
 
@@ -49,9 +51,9 @@ if(Session::adminController()){ ?>
             <div class="form-group">
                 <label >Categoria</label>
                 <select name="category" class="form-control" id="">
-                    <option value="toys">Jugetes</option>
-                    <option value="food">Comida</option>1
-                    <option value="medicine">Medicamentos</option>
+                    <option value="1">Jugetes</option>
+                    <option value="2">Comida</option>1
+                    <option value="3" >Medicamentos</option>
                 </select>
             </div>
             <div class="form-group">

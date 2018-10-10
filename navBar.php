@@ -9,6 +9,8 @@
         <input type="Search">
         
     </div>
+
+    <!-- Display Username/LOGOUT button -->
     <div class="navbar-brand mx-auto ">  
         <?php if (isset($_SESSION['username']))
         { 
@@ -21,14 +23,17 @@
         
     </div>
 
+        <!-- BOTONES LOGIN/REGISTER -->
+
     <?php     
     if(!isset($_SESSION['username']))
     { ?>
-        <a class="navbar-brand mx-auto " href="login.php">Ingreso</a>
-        <a class="navbar-brand mx-auto " href="register.php">Registrate</a>
+        <a class="navbar-brand mx-auto " href="login.php">Login</a>
+        <a class="navbar-brand mx-auto " href="register.php">Register</a>
     <?php 
     }
     
+    // BOTON ADMINISTRAR USUARIOS
     if (isset($_SESSION['username']))
         {
             if ($_SESSION['role'] == 7)

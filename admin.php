@@ -1,14 +1,12 @@
 <?php
+session_start();
 include('loader.php');
-if($sessionManager->adminController()== false)
+if(Session::adminController() == false)
     {
         header('location:index.php');
     }
 include('head.php');
 include_once('navBar.php');
-
-// var_dump($sessionManager->adminController());
-// exit;
 
 
 ?>
@@ -16,13 +14,10 @@ include_once('navBar.php');
 <html lang="en">
 
 <body class="container-fluid">
-<?php
-if(file_get_contents('users.json')!= "")
-    {?>
     <div class="container">
         <h1  class="display-5">Usuarios</h1>
             <?php 
-            foreach(Json::decodeUsers() as $user)
+            foreach($db->index('users') as $user)
                 {
                 ?>
                 <form action="eraseUser.php" method="post">
@@ -42,7 +37,7 @@ if(file_get_contents('users.json')!= "")
             ?>
                     
     </div>
-<?php } 
+<?php 
 if(file_get_contents('deleted.users.json')!= "")
     {?>
         <div class="container">

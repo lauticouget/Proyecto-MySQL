@@ -64,7 +64,6 @@ class Validator
         $errores=[];
         $title=$_POST['title'];
 
-        $id=$user['id'];
         $defaultExt=".jpg";
 
         /* Capturamos el directorio del proyecto. */
@@ -76,7 +75,7 @@ class Validator
         /* Cambiamos el directorio por la Base de Imagenes */
         $profilePath=$proyectPath . "/images/perfiles/";
         /* Le agregamos la concatenacion de nombre y extensión de cada foto de perfil */
-        $profilePath=$profilePath . "perfil" . $id ;
+        $profilePath=$profilePath . "perfil" . $user->getName() ;
 
         if ($_FILES['avatar']['error'] == UPLOAD_ERR_OK)
             {   /* Si el archivo se subió correctamente extraemos "imagen.pjg" a una variable */

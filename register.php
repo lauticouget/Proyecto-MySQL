@@ -1,5 +1,9 @@
 <?php
+session_start();
 include_once('loader.php');
+
+require 'functionalities/user.model.php';
+
 
 if($_POST){
 	$errors=$validator->validate($_POST);
@@ -7,13 +11,13 @@ if($_POST){
 	
 	
 	if($errors==[]){
-		$user=Json::createUser($_POST);
+		
 		$avatarErrors=$validator->uploadAvatar($user);
 		$totalErrors=array_merge($errors, $avatarErrors);
-		
+
 		if($totalErrors== [])
 			{
-				Json::saveUser($user);
+				$db->saveUser($user);
 				header('location: login.php');
 			}
 		
@@ -49,7 +53,7 @@ if($_POST){
 	            </div> 
 				<div class="main-login main-center">
 					<form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
-						
+						<input type="hidden" value="register" name="controll">
 						<div class="form-group">
 							<label for="name" class="cols-sm-2 control-label">Your Name</label>
 							<div class="cols-sm-10">

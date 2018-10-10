@@ -7,78 +7,77 @@ class MySQL extends Base
 {
     private $conection;
 
-    public function pdoDefine($pdo)
+    public function __construct()
     {
         $this->conection=PDOmaker::makePDO();
         
     }
 
-    public static function createUser($data)
+    public function saveUser($user)
     {
-        $user=[
-            'name'=> $_POST['name'],
-            'username'=> $_POST['username'],
-            'password'=> password_hash($_POST['password'], PASSWORD_DEFAULT),
-            'email'=> $_POST['email'],
-            'role' => 1
-        ];
-        $user['id']=Json::generateId();
-        return $user;
+
+    
+        $name=$user->getName();
+        $username=$user->getUsername();
+        $password=$user->getPassword();
+        $email=$user->getEmail();
+        $role=$user->getRole();
+
+
+        $query = "INSERT INTO `users` VALUES (NULL, :name, :username, :password, :email, :role)";
+        $stmnt=$this->conection->prepare($query);
+        //dd($this->conection->prepare('sarasa')->bindParam());
+
+        $stmnt->bindParam(":name", $name, PDO::PARAM_STR);
+        $stmnt->bindParam(":username", $username, PDO::PARAM_STR);
+        $stmnt->bindParam(":password", $password, PDO::PARAM_STR);
+        $stmnt->bindParam(":email", $email, PDO::PARAM_STR);
+        $stmnt->bindParam(":role", $role, PDO::PARAM_STR);
+
+        $stmnt->execute();
     }
 
-    public static function generateId()
+    public function index($table)
     {
-        $file= file_get_contents('users.json');
+    $query = "SELECT * FROM {$table}";
 
-        if($file == ""){
-            return 1;
-        }
+    $stmnt = $this->conection->prepare($query);
 
-        $users=explode(PHP_EOL , $file);
-        array_pop($users);
-        $lastUser=$users[count($users)-1];
-        $lastUser=json_decode($lastUser, true);
-        
-        return $lastUser["id"]+1 ;
-        
+    $stmnt->execute();
+
+    $usersArray = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+    
+    return $usersArray;
     }
 
-    public static function saveUser($user)
+    public function findUser(array $data)
     {
-        $jsonUser=json_encode($user);
-        file_put_contents('users.json', $jsonUser . PHP_EOL, FILE_APPEND);
+
+        $query= "SELECT * FROM users WHERE username = :username";
+
+        $stmnt=$this->conection->prepare($query);
+
+        $stmnt->bindParam(":username", $data['username'], PDO::PARAM_STR);
+
+        $stmnt->execute();
+
+        $userArray = $stmnt->fetch(PDO::FETCH_ASSOC);
         
+        return $userArray;
     }
 
-    public static function eraseUser($data)
+    public function eraseUser($username)
         {
-            $users=Json::decodeUsers();
-            $data=trim($data);
-            foreach($users as $user)
-                {
-                    if($user['username'] == $data)
-                        {
-                            $deletedUser=$user;
-                            $jsonDeletedUser=json_encode($user);
-                            file_put_contents('deleted.users.json', $jsonDeletedUser . PHP_EOL, FILE_APPEND);
-                            unset($user);
-                        }    
-                    if(isset($user))
-                        {
-                            $jsonUser=json_encode($user);
-                            $jsonUsers[]=$jsonUser;
-                        }
-                }
-            if (count($jsonUsers) > 0)
-                {
-                    $fullJson=implode(PHP_EOL, $jsonUsers);
-                    file_put_contents('users.json', $fullJson . PHP_EOL);
-                }else{
-                    file_put_contents('users.json', "");
-                }
+            $query = "DELETE FROM users WHERE users.username = :username";
+
+            $stmnt = $this->conection->prepare($query);
+
+            $stmnt->bindParam(":username", $username, PDO::PARAM_STR);
             
+            $stmnt->execute();
+
         }
-    public static function restoreUser($data)  
+    public function restoreUser($data)  
     {
         $jsonDeletedUser = "";
         $jsonDeletedUsers = [];
@@ -116,125 +115,29 @@ class MySQL extends Base
 
         }
             
-    }
-
-    public static function decodeUsers()
-    {
-        $jsonFile = file_get_contents('users.json');
-        $jsonUsers = explode(PHP_EOL , $jsonFile);
-        array_pop($jsonUsers);
-        foreach($jsonUsers as $jsonUser)
-        { 
-            $users[]=json_decode($jsonUser, true);        
-        }
-        return $users;    
-    }
+    }   
     
-    public static function decodeDeletedUsers()
+    
+    public function saveProduct($productObj)
     {
-        $users = [];
+        $name=$productObj->getName();
+        $price=$productObj->getPrice();
+        $category=$productObj->getCategory();
+        $imageExt = $productObj->getImageExt();
+        $imageRoot = $productObj->getImageRoot();
 
-        $jsonFile = file_get_contents('deleted.users.json');
-        $jsonUsers = explode(PHP_EOL , $jsonFile);
-        
-        array_pop($jsonUsers);
+        $query = "INSERT INTO products VALUES(NULL, :name, :price, :category_id, :image_ext, :image_root)";
 
-        foreach($jsonUsers as $jsonUser) {
-            $users[]=json_decode($jsonUser, true); 
-            
-        }
-        
-        return $users;
-    }
+        $stmnt = $this->conection->prepare($query); 
 
-    public static function findJsonUser($data)
-    {
-        if(Json::decodeUsers()!= null)
-            {
-                strpos($data);
-            }    
+        $stmnt->bindParam(":name", $name, PDO::PARAM_STR);
+        $stmnt->bindParam(":price", $price, PDO::PARAM_INT);
+        $stmnt->bindParam(":category_id", $category, PDO::PARAM_INT);
+        $stmnt->bindParam(":image_ext", $imageExt, PDO::PARAM_STR);
+        $stmnt->bindParam(":image_root", $imageRoot, PDO::PARAM_STR);
         
-    }
-    public static function findUserWhitName($data)
-    {
-        if(Json::decodeUsers()!= null)
-            {
-                $users=Json::decodeUsers();   
-                foreach($users as $user)
-                {
-                    if($user['username'] == $data)
-                    {    
-                        return $user;
-                        exit;
-                    }
-                }
-            }    
-        
-    }
-    public static function findUser(array $data)
-    {
-        if(file_get_contents('users.json') != "")
-            {
-                if(Json::decodeUsers() != null)
-                {
-                    $users = Json::decodeUsers();   
-                    foreach($users as $user)
-                    {
-                        if($user['username'] == $data['username'])
-                        {    
-                            return $user;
-                            exit;
-                        }
-                    }
-                } 
-            }else{
-                return null;
-            }
-        
-        
-    }
-    public static function decodeProducts()
-    {
-        $productsFile=file_get_contents('products.json');
-        $jsonProducts = explode(PHP_EOL , $productsFile);
-        array_pop($jsonProducts);
-        foreach($jsonProducts as $jsonProduct)
-        { 
-            $products[]=json_decode($jsonProduct, true);        
-        }
-        return $products;    
-    }
-    public static function generateProductId()
-    {
-        $file= file_get_contents('products.json');
+        $stmnt->execute();
 
-        if($file == ""){
-            return 1;
-        }
-
-        $products=explode(PHP_EOL , $file);
-        array_pop($products);
-        $lastProduct=$products[count($products)-1];
-        $lastProduct=json_decode($lastProduct, true);
-        
-        return $lastProduct["id"]+1 ;
-        
-    }
-    public static function saveProduct($productObj)
-    {
-        $product=[
-            'name'=> $productObj->getName(),
-            'price'=> $productObj->getPrice(),
-            'category'=> $productObj->getCategory(),
-            'imageExt'=> $productObj->getImageExt(),
-            'imageRoot'=> $productObj->getImageRoot()
-        ];
-        $product['id']=Json::generateProductId();
-
-        $jsonProduct=json_encode($product);
-        file_put_contents('products.json', $jsonProduct . PHP_EOL, FILE_APPEND);
-        return $product;
-        
     }
 
 }

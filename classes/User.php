@@ -11,7 +11,7 @@ class User
 
 
 
-    public function __construct(string $name, string $username, string $email, string $password, int $role, int $id)
+    public function __construct(string $name, string $username, string $email, string $password, int $role, int $id = null)
     {
         $this->name=$name;
         $this->username=$username;
@@ -56,17 +56,6 @@ class User
         return $this;
     }
 
-    public function getUserName()
-    {
-        return $this->userName;
-    }
-
-    public function setUserName($userName)
-    {
-        $this->userName = $userName;
-
-        return $this;
-    }
 
     public function getRole()
     {
@@ -91,10 +80,27 @@ class User
 
         return $this;
     }
+
+    /**
+     * Get the value of username
+     */ 
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set the value of username
+     *
+     * @return  self
+     */ 
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
 }
-if(isset($_SESSION['username'])){
-    $userArray=Json::findUserWhitName($_SESSION['username']);
-    $user=new User ($userArray['name'], $userArray['username'], $userArray['email'], $userArray['password'], $userArray['role'], $userArray['id']);
-}
+
 
 
